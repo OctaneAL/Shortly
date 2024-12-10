@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/OctaneAL/Shortly/internal/cli"
+	"./internal/cli"
 )
 
 func main() {

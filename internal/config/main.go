@@ -13,6 +13,7 @@ type Config interface {
 	pgdb.Databaser
 	types.Copuser
 	comfig.Listenerer
+	DatabaseURL() string
 }
 
 type config struct {
@@ -21,6 +22,15 @@ type config struct {
 	types.Copuser
 	comfig.Listenerer
 	getter kv.Getter
+}
+
+func (c *config) DatabaseURL() string {
+	// return kv.MustGetString(c.getter, "db.url")
+	dbMap, err := kv.MustFromEnv().GetStringMap("db")
+	if err != nil {
+		panic(err)
+	}
+	return dbMap["url"].(string)
 }
 
 func New(getter kv.Getter) Config {

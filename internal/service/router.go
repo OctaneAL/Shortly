@@ -16,9 +16,13 @@ func (s *service) router() chi.Router {
 			handlers.CtxLog(s.log),
 		),
 	)
-	r.Route("/integrations/Shortly", func(r chi.Router) {
-		// configure endpoints here
-	})
+
+	r.Get("/hello", handlers.HelloWorld)
+	r.Post("/decode", handlers.Decode)
+
+	// r.Route("/integrations/Shortly", func(r chi.Router) {
+	// 	// configure endpoints here
+	// })
 
 	return r
 }

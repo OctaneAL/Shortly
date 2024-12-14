@@ -11,14 +11,14 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
-type service struct {
+type Service struct {
 	log      *logan.Entry
 	copus    types.Copus
 	listener net.Listener
 	db       *db.DB
 }
 
-func (s *service) run() error {
+func (s *Service) run() error {
 	s.log.Info("Service started")
 	r := s.router()
 
@@ -29,10 +29,10 @@ func (s *service) run() error {
 	return http.Serve(s.listener, r)
 }
 
-func newService(cfg config.Config) *service {
+func newService(cfg config.Config) *Service {
 	database := db.NewDB(cfg.DatabaseURL())
 
-	return &service{
+	return &Service{
 		log:      cfg.Log(),
 		copus:    cfg.Copus(),
 		listener: cfg.Listener(),

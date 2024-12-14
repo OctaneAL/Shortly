@@ -6,15 +6,14 @@ import (
 
 	"errors"
 
-	"github.com/OctaneAL/Shortly/internal/util"
 	"github.com/google/jsonapi"
 	"gitlab.com/distributed_lab/ape"
 	"gitlab.com/distributed_lab/ape/problems"
 )
 
-func Decode(w http.ResponseWriter, r *http.Request) {
+func Encode(w http.ResponseWriter, r *http.Request) {
 	type request struct {
-		URL string `json:"url"`
+		Shortened string `json:"shortened_url"`
 	}
 
 	req := request{}
@@ -23,16 +22,14 @@ func Decode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.URL == "" {
-		ape.RenderErr(w, problems.BadRequest(errors.New("missing 'url' field"))...)
+	if req.Shortened == "" {
+		ape.RenderErr(w, problems.BadRequest(errors.New("missing 'shortened_url' field"))...)
 		return
 	}
 
-	shortened := util.HashAndConvert(req.URL)
-
 	database := DB(r.Context())
 
-	err := database.SaveURL(r.Context(), req.URL, shortened)
+	originalURL, err := database.GetOriginalURL(r.Context(), req.Shortened)
 
 	if err != nil {
 		ape.RenderErr(w, []*jsonapi.ErrorObject{problems.InternalError()}...)
@@ -40,7 +37,6 @@ func Decode(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ape.Render(w, map[string]string{
-		"original_url": req.URL,
-		"short_code":   shortened,
+		"original_url": originalURL.OriginalURL,
 	})
 }

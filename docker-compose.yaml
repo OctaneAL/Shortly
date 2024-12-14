@@ -1,0 +1,49 @@
+version: '3.8'
+
+name: fitness-app
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${PG_DBNAME}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    networks:
+      - server-side
+    ports:
+      - 2022:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "fitness_app", "-U", "octaneal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: "placeholder"
+    environment:
+      - ADDRESS=${ADDRESS}
+      - PG_DBNAME=${PG_DBNAME}
+      - PG_HOST=${PG_HOST}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - DATABASE_URL=${DATABASE_URL}
+    networks:
+      - client-side
+      - server-side
+    volumes:
+      - backend-cache:/code/target
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+
+volumes:
+  db-data:
+  backend-cache:
+
+networks:
+  server-side:
+  client-side:

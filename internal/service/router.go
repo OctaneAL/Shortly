@@ -1,12 +1,14 @@
 package service
 
 import (
+	"context"
+
 	"github.com/OctaneAL/Shortly/internal/service/handlers"
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
 )
 
-func (s *service) router() chi.Router {
+func (s *Service) router() chi.Router {
 	r := chi.NewRouter()
 
 	r.Use(
@@ -14,15 +16,15 @@ func (s *service) router() chi.Router {
 		ape.LoganMiddleware(s.log),
 		ape.CtxMiddleware(
 			handlers.CtxLog(s.log),
+			handlers.CtxDB(context.Background(), s.db),
 		),
 	)
 
-	r.Get("/hello", handlers.HelloWorld)
-	r.Post("/decode", handlers.Decode)
-
-	// r.Route("/integrations/Shortly", func(r chi.Router) {
-	// 	// configure endpoints here
-	// })
+	r.Route("/integrations/Shortly", func(r chi.Router) {
+		r.Get("/hello", handlers.HelloWorld)
+		r.Post("/decode", handlers.Decode)
+		r.Get("/encode", handlers.Encode)
+	})
 
 	return r
 }

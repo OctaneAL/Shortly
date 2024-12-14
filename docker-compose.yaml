@@ -22,7 +22,7 @@ services:
       retries: 5
 
   backend:
-    image: "placeholder"
+    image: octaneal/shortly-backend:latest
     environment:
       - ADDRESS=${ADDRESS}
       - PG_DBNAME=${PG_DBNAME}

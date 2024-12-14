@@ -21,7 +21,6 @@ func (s *Service) router() chi.Router {
 	)
 
 	r.Route("/integrations/Shortly", func(r chi.Router) {
-		r.Get("/hello", handlers.HelloWorld)
 		r.Post("/decode", handlers.Decode)
 		r.Get("/encode", handlers.Encode)
 	})

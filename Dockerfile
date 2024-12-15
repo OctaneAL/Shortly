@@ -14,4 +14,6 @@ FROM alpine:3.9
 COPY --from=buildbase /usr/local/bin/Shortly /usr/local/bin/Shortly
 RUN apk add --no-cache ca-certificates
 
-ENTRYPOINT ["Shortly"]
+EXPOSE 8080
+
+ENTRYPOINT ["sh", "-c", "Shortly migrate up && Shortly run service"]
